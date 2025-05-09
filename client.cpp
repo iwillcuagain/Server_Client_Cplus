@@ -30,7 +30,7 @@ uint_type address_1 = 2130706434;
 //instantiate constructor
 boost::asio::ip::address_v4 address_v4(address_1);
 
-//constructs the ipv4 address
+//constructs the ipv4 address **
 boost::asio::ip::address address(address_v4);
 
 int port_num = 5001;
@@ -57,10 +57,6 @@ char *ptr_array = data_ptr;
 std::size_t buffer_size = 1024; //maybe adjust later to match data_ptr array size
 boost::asio::mutable_buffer buffer(ptr_array, buffer_size);
 
-//const std::string path = "C:\\Users\\levai\\OneDrive\\Desktop\\exchange.txt";
-
-//auto flags = boost::asio::file_base::flags::read_write;
-
 
 //you can query the socket to see how much data is available then allocate your buffer accordingly
 //socket::available
@@ -75,9 +71,28 @@ boost::asio::mutable_buffer buffer(ptr_array, buffer_size);
 
 //uses the "write function" (1 of overload x)
 
+//create a file
+std::ofstream myFile("output.txt");
+
+
+//build a stream file then send to server to hold
+
+const std::string path = "../output.txt";
+
+//opens the file in read_write mode
+auto flags = boost::asio::file_base::flags::read_write;
+
+//opens the file in append mode
+//auto flags = boost::asio::file_base::flags::append;
+
+// Construct and open a basic_stream_file.
+boost::asio::basic_stream_file<executor_type> my_stream_file(ex, path, flags );
 
 
 int main(){
+
+    myFile << "This is a newly created file on the client side";
+    myFile.close();
 
     protocol_type protocol = boost::asio::ip::tcp::v4();
     
@@ -94,6 +109,27 @@ int main(){
     boost::asio::write(basic_sock, buffer);
     std::cout<<"Message sent"<<std::endl;
 
+    //writes data to the stream file
+    my_stream_file.write_some(buffer);
+
+    //take the contents of the buffer and send it to the file
+    //you can take in input to change the data in the buffer
+    //you can append data to the stream file.
+
+    //how would you send the stream_file though, would you just modify the buffer?
+
+    //sends the new file to/through the socket
+    try{
+    boost::asio::write(basic_sock, buffer);
+    std::cout<<"new Buffer socket sent"<<std::endl;
+    }
+    catch(boost::system::system_error){
+        std::cout<<"Error occured sending new socket"<<std::endl;
+    }
+
+
+
+    //write to the buffer
 
     
 

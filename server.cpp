@@ -18,9 +18,10 @@ boost::asio::io_context io_service_object;
 //this is the protocol that we are going to use
 typedef boost::asio::ip::tcp protocol_type;
 
-
+//initaiting the socket here
 boost::asio::ip::tcp::socket basic_sock(io_service_object); 
 
+//the errors during transmission **
 boost::system::error_code e;
 
 //the address type of a Address
@@ -39,7 +40,6 @@ boost::asio::ip::address address(addy);
 int port_num = 5000;
 
 //constructor for endpoint
-
 boost::asio::ip::tcp::endpoint endpoint(address,port_num);
 
 
@@ -58,9 +58,11 @@ int main() {
     //you have to call static methods with "::" instead "."
     protocol_type protocol = boost::asio::ip::tcp::v4();
     
+    //officially initiating the executor into ex
     executor_type ex = io_service_object.get_executor();
-    // To call a constructor, we must create an object at the same time by providing the arguments; we cannot call the object like a function afterward.
 
+    // To call a constructor, we must create an object at the same time by providing the arguments
+    // we cannot call the object like a function afterward.
     acceptor.open(protocol);
 
 
@@ -72,23 +74,28 @@ int main() {
     else{
         std::cout<<"socket is not open"<<std::endl;
     }
-
+    //entering a listening state
     acceptor.listen();
+    
     //when you use accept(), you have to put the socket you want to speak on
     acceptor.accept(basic_sock);
     std::cout<<"Connection established"<<std::endl;
 
-        
+    //build a stream file then act as a 
+    
+    
     try{
 
         while(true){
         basic_sock.receive( buffer);
         std::cout << "Received: " << std::string(data_ptr, buffer_size) << std::endl;
-        }
+            }
     }
     catch (boost::system::system_error){
-        std::cout<<"Error occurred. Verify data transfer"<<std::endl;
+        std::cout<<"Error occurred. Verify data transfer."<<std::endl;
     }
+    
+    
 
     
 
